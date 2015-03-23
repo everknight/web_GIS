@@ -17,8 +17,21 @@ if (mysqli_connect_errno()) {
   echo "Failed to connect to MySQL: " . mysqli_connect_error();
 } else {
 
+  $result = mysqli_query($con,'SELECT GEOID10, '.$thefield.' FROM npi_demo');
+  echo '<script>var jsondata = [';
+  $i = 0;
+  while($row = mysqli_fetch_assoc($result)) {
+    if($i == 0){
+	  $i += 1;
+	  echo json_encode($row);
+	} else{
+	  echo ",";
+	  echo json_encode($row);
+	}
+  }
+  echo "]</script>";
   #phpinfo();
-  $mi = file_get_contents('../web_GIS/MI_Tract.js');
+  /* $mi = file_get_contents('../web_GIS/MI_Tract.js');
   
   $data = explode('"GEOID10":', $mi);
   $i = 0;
@@ -38,7 +51,7 @@ if (mysqli_connect_errno()) {
 	}
 	$i = $i + 1;
   }
-  echo "</script>";
+  echo "</script>"; */
   
   
 }

@@ -5,6 +5,7 @@
     <script src='../web_GIS/mapbox.js'></script>
 	<script src='../web_GIS/jquery-1.11.1.js'></script>
 	<script src='../web_GIS/nprogress.js'></script>
+	<script src='../web_GIS/MI_Tract.js'></script>
 	<?php include 'MI_layers.php';?>
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.css' rel='stylesheet' />
 	<link href = '../web_GIS/nprogress.css' rel='stylesheet' />
@@ -96,6 +97,7 @@
 	
 	<script>
 		//Layer Control
+		NProgress.set(0.1);
 		var layers = document.getElementById('menu-ui');
 		var closeTooltip;
 		
@@ -104,7 +106,7 @@
                 northEast = L.latLng(48.458498, -79.926514),
                 bounds = L.latLngBounds(southWest, northEast);
         //Initialize Map Object
-		var map = L.mapbox.map('map', 'examples.map-i86nkdio', {  //'lruiyang.ieap3p3j'
+		var map = L.mapbox.map('map', 'lruiyang.ieap3p3j', {  //'lruiyang.ieap3p3j'
             accessToken: 'pk.eyJ1IjoibHJ1aXlhbmciLCJhIjoic0lZREI2VSJ9.ZEoYy45fcxMV6RBqseIWoQ',
 			minZoom: 6,
             maxZoom: 17,
@@ -127,51 +129,6 @@
 			'National Plan Providers per Person Estimate in 2014'];
 		var ranges = {};
 		addselect = true;
-		
-		//Set up a better experience user interface for layer selection
-		//$("#variables")
-/* 		  .mouseover(function(){
-			if(addselect){
-				var $select = $('<select size = "4"></select>')
-					.appendTo($('#variables'))
-					.on('change', function() {
-						setMapLayer($(this).val());
-					});
-				
-				for (var i = 0; i < variables.length; i++) {
-					ranges[variables[i]] = { min: Infinity, max: -Infinity };
-					// Simultaneously, build the UI for selecting different
-					// ranges
-					$('<option></option>')
-							.text(variables[i])
-							.attr('value', variables[i])
-							.appendTo($select);
-					if(variables[i] == AGLayer._title){
-						$("select option[value ='"+ variables[i] + "']").attr("selected","selected");
-					}
-				}
-								
-				$("#variables").css('background-image', 'auto')
-				  .css('background-repeat', 'auto')
-				  .css('height', 'auto')
-				  .css('width', 'auto')
-				  .css('border-radius', '2px')
-				  .css('background-size', 'auto');
-				
-				addselect = false;
-			}
-		  })
-		  .mouseleave(function(){
-			$("#variables").empty();
-			$("#variables").css('background-image', 'url(../web_GIS/icons-000000@2x.png)')
-			  .css('background-repeat', ' no-repeat')
-			  .css('height', '50px')
-			  .css('width', '50px')
-			  .css('border-radius', '25px')
-			  .css('background-size', '50px 50px');
-			addselect = true;
-		  });
- */		
  
 		//Set Logo interaction to help User to redirect themselves to CEHI website 
 		$("#logo a img")
@@ -184,10 +141,33 @@
 		
 		
 		//Initialize the layer
-		NProgress.set(0.4);
+		NProgress.set(0.1);
+		var progress= 0;
+		var loaded = 0;
+		var totaln = jsondata.length;
 				
-		//Join Geojson with jsondata
+		function initlayers(init){
+			window.loaded = 1;
+		}
+		
 		function getStyle(feature,defaultOptions) {
+			if(loaded == 0){
+				var i = 0; 
+				notquit = true;
+				while(feature.properties.nums == 0 & i<jsondata.length & notquit ){
+					if(jsondata[i].GEOID10 == feature.properties.GEOID10){  ///Need to change if Prime Key changes
+						feature.properties.nums = jsondata[i][thefield]; ///Need to change if Prime Key changes
+						notquit = false;
+						jsondata.splice(i,1);
+					}
+					i++;
+				}
+				progress += 1;
+				if(progress % 100 == 0){
+					NProgress.set(progress/totaln);
+				}
+			}
+						
 			return {
 				weight: 0.2,
 				opacity: 1,
@@ -305,9 +285,6 @@
 				}
 			}
 		}
-			
-		NProgress.set(0.8);
-		NProgress.done();
 				
 		
 			//onRemove: function(map){
@@ -319,6 +296,7 @@
 						style: getStyle,
 						onEachFeature: onEachFeature
 					});
+		AGLayer.on('layeradd', initlayers(AGLayer))
 		//"Pop_den", 'Population Density of Michigan in year 2010');
 		
 		function setMapLayer(name){
@@ -353,6 +331,7 @@
 		
 		
 		map.addLayer(AGLayer);
+		NProgress.done();
 		colorlable = [139.86, 1057.5, 2618.1, 4801];
 		document.getElementById("legend_title").innerHTML = 'Population Density of Michigan in year 2010';
 		document.getElementById("label1").innerHTML = '< '+colorlable[0];
