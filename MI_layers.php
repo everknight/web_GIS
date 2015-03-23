@@ -19,28 +19,29 @@ if (mysqli_connect_errno()) {
 
   #phpinfo();
   $mi = file_get_contents('../web_GIS/MI_Tract.js');
+  
   $data = explode('"GEOID10":', $mi);
   $i = 0;
   foreach ($data as &$dt){
 	if($i == 0){
-	  echo $dt.'"GEOID10":';
+	  echo "<script>";
+	  echo $dt;
 	} else {
+      echo '"GEOID10":';
 	  $id = explode(', "NAME10":', $dt);
-	  echo '<br>'.$dt.'<br>';
 	  $result = mysqli_query($con,'SELECT GEOID10, '.$thefield.' FROM npi_demo WHERE GEOID10 = '.current($id));
+	  $attr = explode('"nums":0', $dt);
+	  echo current($attr).'"nums":';
 	  while($row = mysqli_fetch_assoc($result)) {
-		echo '<br>';
-		echo implode(" ", $row);
-		echo '<br>';
+		echo $row[$thefield].next($attr);
 	  }
 	}
 	$i = $i + 1;
   }
-  
-  #echo '<p>SELECT GEOID10, '.$thefield.' FROM npi_demo <br></p>';
+  echo "</script>";
   
   
 }
 ?>
 
-<script src='../web_GIS/MI_Tract.js'></script>
+

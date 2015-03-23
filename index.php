@@ -5,7 +5,6 @@
     <script src='../web_GIS/mapbox.js'></script>
 	<script src='../web_GIS/jquery-1.11.1.js'></script>
 	<script src='../web_GIS/nprogress.js'></script>
-	<script src='../web_GIS/MI_Tract.js'></script>
 	<?php include 'MI_layers.php';?>
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.css' rel='stylesheet' />
 	<link href = '../web_GIS/nprogress.css' rel='stylesheet' />
@@ -192,10 +191,10 @@
 			return {
 				weight: 0.2,
 				opacity: 1,
-				color: getColor(feature.properties.NAME10, thefield),
+				color: getColor(feature.properties.nums, thefield),
 				width: 0.1,
 				fillOpacity: 0.4,
-				fillColor: getColor(feature.properties.NAME10, thefield)
+				fillColor: getColor(feature.properties.nums, thefield)
 			};
 		}
 			
