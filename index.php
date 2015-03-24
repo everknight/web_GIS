@@ -2,7 +2,8 @@
   <head>
     <title>CEHI WebMap</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='../web_GIS/mapbox.js'></script>
+    <script src='../web_GIS/leaflet.js'></script>
+	<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.3.0"></script>
 	<script src='../web_GIS/jquery-1.11.1.js'></script>
 	<script src='../web_GIS/nprogress.js'></script>
 	<script src='../web_GIS/MI_Tract.js'></script>
@@ -106,12 +107,18 @@
                 northEast = L.latLng(48.458498, -79.926514),
                 bounds = L.latLngBounds(southWest, northEast);
         //Initialize Map Object
-		var map = L.mapbox.map('map', 'lruiyang.ieap3p3j', {  //'lruiyang.ieap3p3j'
-            accessToken: 'pk.eyJ1IjoibHJ1aXlhbmciLCJhIjoic0lZREI2VSJ9.ZEoYy45fcxMV6RBqseIWoQ',
+		var map = L.map('map', {maxBounds: bounds,minZoom: 6,maxZoom: 17}).setView([43.609805, -84.694873], 7);
+		/* L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {  //'lruiyang.ieap3p3j'
 			minZoom: 6,
             maxZoom: 17,
-            maxBounds: bounds
-        }).setView([43.609805, -84.694873], 7);
+			id: 'examples.map-20v6611k',//'lruiyang.ieap3p3j',//
+			attribution:'Data Source: '+'<a href="http://factfinder2.census.gov/">US Census Bureau</a> and <a href="https://nppes.cms.hhs.gov">NPPES</a>',
+        }).addTo(map); */
+		var layer = new L.StamenTileLayer("terrain", {
+			attribution:'Data Source: '+'<a href="http://factfinder2.census.gov/">US Census Bureau</a> and <a href="https://nppes.cms.hhs.gov">NPPES</a>'
+		});
+		map.addLayer(layer);
+		
 		
 		////map.legendControl.addLegend(document.getElementById('legend').innerHTML);
 		
